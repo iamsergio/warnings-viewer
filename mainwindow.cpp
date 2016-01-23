@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     connect(ui->actionQuit, &QAction::triggered, qApp, &QApplication::quit);
-    connect(ui->actionOpen_Log, &QAction::triggered, this, &MainWindow::openLog);
+    connect(ui->actionOpen_Log, &QAction::triggered, this, &MainWindow::askOpenLog);
     connect(m_model, &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryFilter);
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::selectAllCategories);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::unselectAllCategories);
@@ -89,10 +89,16 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *)
     menu.exec(QCursor::pos());
 }
 
-void MainWindow::openLog()
+void MainWindow::askOpenLog()
 {
-    const QString fileName = QFileDialog::getOpenFileName(this, tr("Open log"));
-    m_model->loadFile(fileName);
+    const QString filename = QFileDialog::getOpenFileName(this, tr("Open log"));
+    if (!filename.isEmpty())
+        openLog(filename);
+}
+
+void MainWindow::openLog(const QString &filename)
+{
+    m_model->loadFile(filename);
 }
 
 void MainWindow::updateCategoryFilter()

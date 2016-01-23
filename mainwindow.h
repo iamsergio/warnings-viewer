@@ -41,13 +41,13 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+    void openLog(const QString &filename);
 protected:
     void resizeEvent(QResizeEvent *) override;
     void contextMenuEvent(QContextMenuEvent *ev) override;
 
 private Q_SLOTS:
-    void openLog();
+    void askOpenLog();
     void updateCategoryFilter();
     void selectAllCategories();
     void unselectAllCategories();
