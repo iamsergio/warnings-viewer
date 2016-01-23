@@ -1,7 +1,7 @@
 /*
    This file is part of warning-viewer.
 
-  Copyright (C) 2015 Sergio Martins <smartins@kde.org>
+  Copyright (C) 2015-2016 Sergio Martins <smartins@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,5 +31,10 @@ int main(int argv, char **argc)
     QApplication app(argv, argc);
     MainWindow window;
     window.show();
+
+    const auto args = qApp->arguments();
+    if (args.size() > 1)
+        window.openLog(args[1]);
+
     return app.exec();
 }
