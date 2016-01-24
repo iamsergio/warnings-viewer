@@ -1,7 +1,7 @@
 /*
    This file is part of warning-viewer.
 
-  Copyright (C) 2015-2016 Sergio Martins <smartins@kde.org>
+  Copyright (C) 2016 Sergio Martins <smartins@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,52 +22,29 @@
   without including the source code for Qt in the source distribution.
 */
 
-#ifndef VIEWER_MAIN_WINDOW_H
-#define VIEWER_MAIN_WINDOW_H
+#ifndef WARNING_VIEWER_TAB_H
+#define WARNING_VIEWER_TAB_H
 
-#include "ui_mainwindow.h"
+#include <QVector>
+#include <QWidget>
 
-#include <QMainWindow>
-
-namespace Ui {
-class MainWindow;
-}
-
-class Tab;
 class WarningModel;
 class WarningProxyModel;
 class QTableView;
 
-class MainWindow : public QMainWindow
+class Tab : public QWidget
 {
+    Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-    void openLog(const QString &filename);
-protected:
-    void resizeEvent(QResizeEvent *) override;
-    void contextMenuEvent(QContextMenuEvent *ev) override;
-
-private Q_SLOTS:
-    void askOpenLog();
-    void updateCategoryFilter();
-    void selectAllCategories();
-    void unselectAllCategories();
-    void filterByCategory();
-    void filterByText();
-    void updateStatusBar();
-    void copyCell();
-    void openCellInEditor();
-    void onTabChanged();
-
+    typedef QVector<Tab> List;
+    explicit Tab(const QString &filename, QWidget *parent = nullptr);
+    QTableView *tableView() const;
+    WarningProxyModel* proxyModel() const;
+    WarningModel* model() const;
 private:
-    void resizeColumnsToContents();
-    QTableView *currentTableView() const;
-    WarningModel *currentModel() const;
-    WarningProxyModel *currentProxyModel() const;
-    Tab* currentTab() const;
-    QModelIndex selectedIndex() const;
-    Ui::MainWindow *const ui;
+    WarningModel *const m_model;
+    WarningProxyModel *const m_proxyModel;
+    QTableView *const m_tableView;
 };
 
 #endif

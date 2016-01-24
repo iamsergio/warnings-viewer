@@ -50,7 +50,11 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QTableView" name="tableView"/>
+       <widget class="QTabWidget" name="tabWidget">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLineEdit" name="filterLineEdit">
@@ -87,12 +91,12 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpen_Log">
    <property name="text">
-    <string>Open Log...</string>
+    <string>&amp;Open Log...</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
  </widget>

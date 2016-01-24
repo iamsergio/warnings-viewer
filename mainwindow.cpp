@@ -25,6 +25,7 @@
 #include "mainwindow.h"
 #include "warningmodel.h"
 #include "warningproxymodel.h"
+#include "tab.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -35,31 +36,25 @@
 #include <QCursor>
 #include <QClipboard>
 #include <QProcess>
+#include <QTableView>
+#include <QFileInfo>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow())
-    , m_model(new WarningModel(this))
-    , m_proxyModel(new WarningProxyModel(this))
 {
     ui->setupUi(this);
     connect(ui->actionQuit, &QAction::triggered, qApp, &QApplication::quit);
     connect(ui->actionOpen_Log, &QAction::triggered, this, &MainWindow::askOpenLog);
-    connect(m_model, &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryFilter);
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::selectAllCategories);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::unselectAllCategories);
     connect(ui->filterListWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::filterByCategory);
+    connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
-    connect(m_proxyModel, &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
 
-    m_proxyModel->setSourceModel(m_model);
-    ui->tableView->setModel(m_proxyModel);
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    m_model->loadFile("/tmp/make-qtbase.log");
     setWindowTitle("warnings-viewer");
-    ui->tableView->setSortingEnabled(true);
-    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectItems);
 }
 
 MainWindow::~MainWindow()
@@ -70,7 +65,7 @@ MainWindow::~MainWindow()
 void MainWindow::resizeEvent(QResizeEvent *ev)
 {
     QMainWindow::resizeEvent(ev);
-    ui->tableView->resizeColumnsToContents();
+    resizeColumnsToContents();
 }
 
 void MainWindow::contextMenuEvent(QContextMenuEvent *)
@@ -98,17 +93,28 @@ void MainWindow::askOpenLog()
 
 void MainWindow::openLog(const QString &filename)
 {
-    m_model->loadFile(filename);
+    QFileInfo finfo(filename);
+    if (!finfo.exists() || !finfo.isFile())
+        return;
+
+    auto tab = new Tab(filename);
+    ui->tabWidget->addTab(tab, finfo.fileName());
+    connect(tab->model(), &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryFilter);
+    connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
 }
 
 void MainWindow::updateCategoryFilter()
 {
+    WarningModel *model = currentModel();
+    if (!model)
+        return;
+
     ui->filterListWidget->clear();
-    foreach (const QString &category, m_model->categories()) {
+    foreach (const QString &category, model->categories()) {
          auto item = new QListWidgetItem(category, ui->filterListWidget);
          item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
     }
-    ui->tableView->resizeColumnsToContents();
+    resizeColumnsToContents();
 }
 
 void MainWindow::selectAllCategories()
@@ -123,24 +129,30 @@ void MainWindow::unselectAllCategories()
 
 void MainWindow::filterByCategory()
 {
+    WarningProxyModel *proxy = currentProxyModel();
+    if (!proxy)
+        return;
+
     QSet<QString> categories;
     const QModelIndexList indexes = ui->filterListWidget->selectionModel()->selectedIndexes();
     foreach (const auto &index, indexes) {
         categories.insert(index.data(Qt::DisplayRole).toString());
     }
 
-    m_proxyModel->setCategories(categories);
-    ui->tableView->resizeColumnsToContents();
+    proxy->setCategories(categories);
+    resizeColumnsToContents();
 }
 
 void MainWindow::filterByText()
 {
-    m_proxyModel->setText(ui->filterLineEdit->text());
+    if (WarningProxyModel *proxy = currentProxyModel())
+        proxy->setText(ui->filterLineEdit->text());
 }
 
 void MainWindow::updateStatusBar()
 {
-    statusBar()->showMessage(QString("showing %1 warnings").arg(m_proxyModel->rowCount({})));
+    if (WarningProxyModel *proxy = currentProxyModel())
+        statusBar()->showMessage(QString("showing %1 warnings").arg(proxy->rowCount({})));
 }
 
 void MainWindow::copyCell()
@@ -166,6 +178,48 @@ void MainWindow::openCellInEditor()
 
 QModelIndex MainWindow::selectedIndex() const
 {
-    const auto indexes = ui->tableView->selectionModel()->selectedIndexes();
-    return indexes.isEmpty() ? QModelIndex() : indexes.first();
+    QTableView *tableView = currentTableView();
+    if (tableView) {
+        const auto indexes = tableView->selectionModel()->selectedIndexes();
+        return indexes.isEmpty() ? QModelIndex() : indexes.first();
+    }
+
+    return QModelIndex();
+}
+
+void MainWindow::resizeColumnsToContents()
+{
+    QTableView *table = currentTableView();
+    if (table)
+        table->resizeColumnsToContents();
+}
+
+QTableView * MainWindow::currentTableView() const
+{
+    Tab *tab = currentTab();
+    return tab ? tab->tableView() : nullptr;
+}
+
+Tab* MainWindow::currentTab() const
+{
+    return qobject_cast<Tab*>(ui->tabWidget->currentWidget());
+}
+
+WarningModel *MainWindow::currentModel() const
+{
+    Tab *tab = currentTab();
+    return tab ? tab->model() : nullptr;
+}
+
+WarningProxyModel *MainWindow::currentProxyModel() const
+{
+    Tab *tab = currentTab();
+    return tab ? tab->proxyModel() : nullptr;
+}
+
+void MainWindow::onTabChanged()
+{
+    filterByText();
+    updateCategoryFilter();
+    updateStatusBar();
 }

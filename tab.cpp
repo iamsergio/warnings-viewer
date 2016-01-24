@@ -22,21 +22,43 @@
   without including the source code for Qt in the source distribution.
 */
 
-#include "mainwindow.h"
+#include "tab.h"
+#include "warningmodel.h"
+#include "warningproxymodel.h"
 
-#include <QApplication>
+#include <QTableView>
+#include <QTableView>
+#include <QVBoxLayout>
+#include <QTableView>
 
-int main(int argv, char **argc)
+Tab::Tab(const QString &filename, QWidget *parent)
+    : QWidget(parent)
+    , m_model(new WarningModel(this))
+    , m_proxyModel(new WarningProxyModel(this))
+    , m_tableView(new QTableView())
 {
-    QApplication app(argv, argc);
-    MainWindow window;
-    window.show();
+    m_model->loadFile(filename);
 
-    const auto args = qApp->arguments();
-    const int numArgs = args.size();
-    for (int i = 1; i < numArgs; ++i) {
-        window.openLog(args[i]);
-    }
+    QVBoxLayout *l = new QVBoxLayout(this);
+    l->addWidget(m_tableView);
 
-    return app.exec();
+    m_tableView->setSortingEnabled(true);
+    m_tableView->setSelectionBehavior(QAbstractItemView::SelectItems);
+    m_proxyModel->setSourceModel(m_model);
+    m_tableView->setModel(m_proxyModel);
+}
+
+QTableView *Tab::tableView() const
+{
+    return m_tableView;
+}
+
+WarningProxyModel* Tab::proxyModel() const
+{
+    return m_proxyModel;
+}
+
+WarningModel* Tab::model() const
+{
+    return m_model;
 }
