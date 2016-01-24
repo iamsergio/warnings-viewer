@@ -24,13 +24,14 @@
 
 #include "warningproxymodel.h"
 
-WarningProxyModel::WarningProxyModel(QObject *parent)
+WarningProxyModel::WarningProxyModel(WarningModel *model, QObject *parent)
     : QSortFilterProxyModel(parent)
 {
     connect(this, &WarningProxyModel::rowsInserted, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::rowsRemoved, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::modelReset, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::layoutChanged, this, &WarningProxyModel::countChanged);
+    connect(model, &WarningModel::loadFinished, this, &WarningProxyModel::onSourceModelLoaded);
 }
 
 bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
@@ -38,13 +39,13 @@ bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &sour
     if (source_parent.isValid())
         return false;
 
-    if (m_categories.isEmpty())
+    if (m_acceptedCategories.isEmpty())
         return false;
 
     const QModelIndex sourceIndex = sourceModel()->index(source_row, 0);
     const Warning warn = sourceIndex.data(WarningModel::WarningRole).value<Warning>();
     const QString category = warn.m_category;
-    if (!m_categories.isEmpty() && !m_categories.contains(category))
+    if (!m_acceptedCategories.isEmpty() && !m_acceptedCategories.contains(category))
         return false;
 
     if (!m_text.isEmpty() && !warn.m_completeText.toLower().contains(m_text.toLower()))
@@ -53,10 +54,10 @@ bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &sour
     return true;
 }
 
-void WarningProxyModel::setCategories(const QSet<QString> &categories)
+void WarningProxyModel::setAcceptedCategories(const QSet<QString> &categories)
 {
-    if (categories != m_categories) {
-        m_categories = categories;
+    if (categories != m_acceptedCategories) {
+        m_acceptedCategories = categories;
         invalidateFilter();
     }
 }
@@ -67,4 +68,24 @@ void WarningProxyModel::setText(const QString &filter)
         m_text = filter;
         invalidateFilter();
     }
+}
+
+void WarningProxyModel::onSourceModelLoaded(bool success, const QString &)
+{
+    if (!success)
+        return;
+
+    m_availableCategories.clear();
+    const int count = rowCount();
+    for (int i = 0; i < count; ++i) {
+        QString category = index(i, 0).data(WarningModel::CategoryRole).toString();
+        m_availableCategories.insert(category);
+    }
+
+    emit categoriesChanged();
+}
+
+QSet<QString> WarningProxyModel::availableCategories() const
+{
+    return m_availableCategories;
 }

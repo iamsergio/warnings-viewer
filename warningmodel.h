@@ -60,15 +60,13 @@ public:
     int count() const;
 
     bool loadFile(const QString &filename);
-    QSet<QString> categories() const;
 
 Q_SIGNALS:
     void countChanged();
-    void categoriesChanged();
+    void loadFinished(bool success, const QString &errorMessage);
 
 private:
     Warning::List m_warnings;
-    QSet<QString> m_categories;
 };
 
 #endif

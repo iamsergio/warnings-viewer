@@ -115,7 +115,7 @@ void MainWindow::openLog(const QString &filename)
     auto tab = new Tab(filename);
     if (tab->model()->rowCount({}) > 0) {
         ui->tabWidget->addTab(tab, finfo.fileName());
-        connect(tab->model(), &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryView);
+        connect(tab->proxyModel(), &WarningProxyModel::categoriesChanged, this, &MainWindow::updateCategoryView);
         connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
     } else {
         tab->deleteLater();
@@ -127,11 +127,11 @@ void MainWindow::updateCategoryView()
 {
     ui->filterListWidget->clear();
 
-    WarningModel *model = currentModel();
-    if (!model)
+    WarningProxyModel *proxy = currentProxyModel();
+    if (!proxy)
         return;
 
-    foreach (const QString &category, model->categories()) {
+    foreach (const QString &category, proxy->availableCategories()) {
          auto item = new QListWidgetItem(category, ui->filterListWidget);
          item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
     }
@@ -160,7 +160,7 @@ void MainWindow::filterByCategory()
         categories.insert(index.data(Qt::DisplayRole).toString());
     }
 
-    proxy->setCategories(categories);
+    proxy->setAcceptedCategories(categories);
     resizeColumnsToContents();
 }
 

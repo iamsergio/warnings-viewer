@@ -34,7 +34,7 @@
 Tab::Tab(const QString &filename, QWidget *parent)
     : QWidget(parent)
     , m_model(new WarningModel(this))
-    , m_proxyModel(new WarningProxyModel(this))
+    , m_proxyModel(new WarningProxyModel(m_model, this))
     , m_tableView(new QTableView())
 {
     m_model->loadFile(filename);

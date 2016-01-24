@@ -106,8 +106,10 @@ int WarningModel::count() const
 bool WarningModel::loadFile(const QString &filename)
 {
     QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        emit loadFinished(false, tr("Couldn't open file %1").arg(filename));
         return false;
+    }
 
     beginResetModel();
     QRegularExpression re("(.*)warning:(.*)\\[-W(.*)\\].*");
@@ -131,7 +133,6 @@ bool WarningModel::loadFile(const QString &filename)
             warn.m_text = match.captured(2);
             const QString category = match.captured(3);
             warn.m_category = category;
-            m_categories.insert(category);
             uniqueWarningsHash.insert(warn.toString(), warn);
         }
     }
@@ -144,13 +145,7 @@ bool WarningModel::loadFile(const QString &filename)
 
     endResetModel();
 
-    emit categoriesChanged();
-
-    qDebug() << "Loaded " << m_warnings.size() << "warnings and" << m_categories.size() << "categories";
+    qDebug() << "Loaded " << m_warnings.size() << "warnings";
+    emit loadFinished(true, QString());
     return true;
-}
-
-QSet<QString> WarningModel::categories() const
-{
-    return m_categories;
 }

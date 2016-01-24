@@ -33,18 +33,25 @@ class WarningProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    explicit WarningProxyModel(QObject *parent = nullptr);
-    void setCategories(const QSet<QString> &categories);
+    explicit WarningProxyModel(WarningModel *model, QObject *parent = nullptr);
+    void setAcceptedCategories(const QSet<QString> &categories);
     void setText(const QString &filter);
+
+    QSet<QString> availableCategories() const;
 
 signals:
     void countChanged();
+    void categoriesChanged();
+
+private Q_SLOTS:
+    void onSourceModelLoaded(bool success, const QString &errorMsg);
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
 private:
-    QSet<QString> m_categories;
+    QSet<QString> m_acceptedCategories;
+    QSet<QString> m_availableCategories;
     QString m_text;
 };
 
