@@ -39,6 +39,7 @@
 #include <QTableView>
 #include <QFileInfo>
 #include <QDebug>
+#include <QContextMenuEvent>
 
 #include <iostream>
 
@@ -72,12 +73,18 @@ void MainWindow::resizeEvent(QResizeEvent *ev)
     resizeColumnsToContents();
 }
 
-void MainWindow::contextMenuEvent(QContextMenuEvent *)
+void MainWindow::contextMenuEvent(QContextMenuEvent *ev)
 {
+    QTableView *tableView = currentTableView();
+    if (!tableView)
+        return;
+
+    QModelIndex index = tableView->indexAt(tableView->viewport()->mapFromGlobal(ev->globalPos()));
+    if (!index.isValid())
+        return;
+
     QMenu menu(this);
     QAction *copy = menu.addAction("Copy");
-
-    QModelIndex index = selectedIndex();
     Warning warn = index.data(WarningModel::WarningRole).value<Warning>();
     if (warn.pathIsAbsolute()) {
         QAction *open = menu.addAction("Open");
