@@ -7,10 +7,16 @@ TARGET = warning-viewer
 INCLUDEPATH += .
 
 # Input
-SOURCES += main.cpp mainwindow.cpp warningmodel.cpp warningproxymodel.cpp tab.cpp
-HEADERS += mainwindow.h warningmodel.h warningproxymodel.h tab.h
+SOURCES += main.cpp mainwindow.cpp warningmodel.cpp warningproxymodel.cpp tab.cpp \
+           settingswindow.cpp \
+           settings.cpp
 
-FORMS += mainwindow.ui
+HEADERS += mainwindow.h warningmodel.h warningproxymodel.h tab.h \
+           settingswindow.h \
+           settings.h
+
+FORMS += mainwindow.ui \
+         settings.ui
 
 CONFIG += c++11
 QT += widgets

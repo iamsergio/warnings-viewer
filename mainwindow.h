@@ -26,8 +26,10 @@
 #define VIEWER_MAIN_WINDOW_H
 
 #include "ui_mainwindow.h"
+#include "settings.h"
 
 #include <QMainWindow>
+#include <QPointer>
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +39,7 @@ class Tab;
 class WarningModel;
 class WarningProxyModel;
 class QTableView;
+class SettingsWindow;
 
 class MainWindow : public QMainWindow
 {
@@ -60,6 +63,7 @@ private Q_SLOTS:
     void openCellInEditor();
     void onTabChanged();
     void closeTab(int index);
+    void openSettings();
 
 private:
     void selectFirstCategory();
@@ -70,6 +74,8 @@ private:
     Tab* currentTab() const;
     QModelIndex selectedIndex() const;
     Ui::MainWindow *const ui;
+    QPointer<SettingsWindow> m_settingsWindow;
+    Settings m_settings;
 };
 
 #endif

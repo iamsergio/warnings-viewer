@@ -26,6 +26,7 @@
 #include "warningmodel.h"
 #include "warningproxymodel.h"
 #include "tab.h"
+#include "settingswindow.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -40,12 +41,14 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QContextMenuEvent>
+#include <QMessageBox>
 
 #include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow())
+    , m_settingsWindow(nullptr)
 {
     ui->setupUi(this);
     connect(ui->actionQuit, &QAction::triggered, qApp, &QApplication::quit);
@@ -56,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
+    connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::openSettings);
 
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -189,8 +193,15 @@ void MainWindow::openCellInEditor()
     QModelIndex index = selectedIndex();
     if (!index.isValid())
         return;
+
+    const QString editor = m_settings.externalEditor();
+    if (editor.isEmpty()) {
+        QMessageBox::warning(this, QString(), tr("Go to settings and set an editor"));
+        return;
+    }
+
     Warning warn = index.data(WarningModel::WarningRole).value<Warning>();
-    QProcess::startDetached("/data/bin/kf.py", { warn.filename() });
+    QProcess::startDetached(editor, { warn.filename() });
 }
 
 QModelIndex MainWindow::selectedIndex() const
@@ -252,4 +263,15 @@ void MainWindow::selectFirstCategory()
 void MainWindow::closeTab(int index)
 {
     delete ui->tabWidget->widget(index);
+}
+
+void MainWindow::openSettings()
+{
+    if (m_settingsWindow) {
+        m_settingsWindow->show();
+        m_settingsWindow->raise();
+    } else {
+        m_settingsWindow = new SettingsWindow(&m_settings, this);
+        m_settingsWindow->show();
+    }
 }
