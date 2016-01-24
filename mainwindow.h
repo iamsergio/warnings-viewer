@@ -61,7 +61,7 @@ private Q_SLOTS:
     void onTabChanged();
 
 private:
-    void selectIndexIfOnlyOne();
+    void selectFirstCategory();
     void resizeColumnsToContents();
     QTableView *currentTableView() const;
     WarningModel *currentModel() const;
