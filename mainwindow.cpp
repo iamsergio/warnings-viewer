@@ -222,4 +222,15 @@ void MainWindow::onTabChanged()
     filterByText();
     updateCategoryFilter();
     updateStatusBar();
+    selectIndexIfOnlyOne();
+}
+
+void MainWindow::selectIndexIfOnlyOne()
+{
+    // If we only have one row, lets select it
+    auto model = ui->filterListWidget->model();
+    if (model->rowCount() != 1)
+        return;
+
+    ui->filterListWidget->selectionModel()->select(model->index(0, 0), QItemSelectionModel::Select);
 }
