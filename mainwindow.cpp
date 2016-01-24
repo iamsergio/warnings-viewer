@@ -39,6 +39,8 @@
 #include <QTableView>
 #include <QFileInfo>
 
+#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow())
@@ -98,9 +100,14 @@ void MainWindow::openLog(const QString &filename)
         return;
 
     auto tab = new Tab(filename);
-    ui->tabWidget->addTab(tab, finfo.fileName());
-    connect(tab->model(), &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryFilter);
-    connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
+    if (tab->model()->rowCount({}) > 0) {
+        ui->tabWidget->addTab(tab, finfo.fileName());
+        connect(tab->model(), &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryFilter);
+        connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
+    } else {
+        tab->deleteLater();
+        std::cout << "File does not contain any warnings (" << finfo.fileName().toStdString() << ")" << std::endl;
+    }
 }
 
 void MainWindow::updateCategoryFilter()
