@@ -38,6 +38,7 @@
 #include <QProcess>
 #include <QTableView>
 #include <QFileInfo>
+#include <QDebug>
 
 #include <iostream>
 
@@ -113,11 +114,12 @@ void MainWindow::openLog(const QString &filename)
 
 void MainWindow::updateCategoryFilter()
 {
+    ui->filterListWidget->clear();
+
     WarningModel *model = currentModel();
     if (!model)
         return;
 
-    ui->filterListWidget->clear();
     foreach (const QString &category, model->categories()) {
          auto item = new QListWidgetItem(category, ui->filterListWidget);
          item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
