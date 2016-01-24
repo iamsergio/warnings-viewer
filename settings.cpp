@@ -24,14 +24,19 @@
 
 #include "settings.h"
 
-Settings::Settings()
+Settings::Settings(QObject *parent)
+    : QObject(parent)
 {
 
 }
 
 void Settings::setCategoryFilterRegexp(const QString &regex)
 {
-    m_settings.setValue("category_filter_regexp", regex);
+    bool valueChanged = categoryFilterRegexp() != regex;
+    if (valueChanged) {
+        m_settings.setValue("category_filter_regexp", regex);
+        emit categoryFilterRegexpChanged(regex);
+    }
 }
 
 QString Settings::categoryFilterRegexp() const

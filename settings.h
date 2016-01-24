@@ -27,10 +27,11 @@
 
 #include <QSettings>
 
-class Settings
+class Settings : public QObject
 {
+    Q_OBJECT
 public:
-    Settings();
+    explicit Settings(QObject *parent = nullptr);
     void save();
 
     void setCategoryFilterRegexp(const QString &);
@@ -38,6 +39,10 @@ public:
 
     void setExternalEditor(const QString &);
     QString externalEditor() const;
+
+signals:
+    void categoryFilterRegexpChanged(const QString &);
+
 private:
     QSettings m_settings;
 };
