@@ -50,7 +50,7 @@ protected:
 
 private Q_SLOTS:
     void askOpenLog();
-    void updateCategoryFilter();
+    void updateCategoryView();
     void selectAllCategories();
     void unselectAllCategories();
     void filterByCategory();

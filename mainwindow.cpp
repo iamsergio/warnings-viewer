@@ -104,7 +104,7 @@ void MainWindow::openLog(const QString &filename)
     auto tab = new Tab(filename);
     if (tab->model()->rowCount({}) > 0) {
         ui->tabWidget->addTab(tab, finfo.fileName());
-        connect(tab->model(), &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryFilter);
+        connect(tab->model(), &WarningModel::categoriesChanged, this, &MainWindow::updateCategoryView);
         connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
     } else {
         tab->deleteLater();
@@ -112,7 +112,7 @@ void MainWindow::openLog(const QString &filename)
     }
 }
 
-void MainWindow::updateCategoryFilter()
+void MainWindow::updateCategoryView()
 {
     ui->filterListWidget->clear();
 
@@ -230,7 +230,7 @@ WarningProxyModel *MainWindow::currentProxyModel() const
 void MainWindow::onTabChanged()
 {
     filterByText();
-    updateCategoryFilter();
+    updateCategoryView();
     updateStatusBar();
     selectFirstCategory();
 }
