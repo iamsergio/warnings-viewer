@@ -59,6 +59,7 @@ private Q_SLOTS:
     void copyCell();
     void openCellInEditor();
     void onTabChanged();
+    void closeTab(int index);
 
 private:
     void selectFirstCategory();

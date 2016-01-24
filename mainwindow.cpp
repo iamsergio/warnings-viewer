@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::unselectAllCategories);
     connect(ui->filterListWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::filterByCategory);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
+    connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
 
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -237,4 +238,9 @@ void MainWindow::selectFirstCategory()
     auto model = ui->filterListWidget->model();
     if (model->rowCount() > 0)
         ui->filterListWidget->selectionModel()->select(model->index(0, 0), QItemSelectionModel::Select);
+}
+
+void MainWindow::closeTab(int index)
+{
+    delete ui->tabWidget->widget(index);
 }
