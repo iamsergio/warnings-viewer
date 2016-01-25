@@ -31,10 +31,10 @@
 #include <QVBoxLayout>
 #include <QTableView>
 
-Tab::Tab(const QString &filename, QWidget *parent)
+Tab::Tab(const QString &filename, Settings *settings, QWidget *parent)
     : QWidget(parent)
     , m_model(new WarningModel(this))
-    , m_proxyModel(new WarningProxyModel(m_model, this))
+    , m_proxyModel(new WarningProxyModel(m_model, settings, this))
     , m_tableView(new QTableView())
     , m_filename(filename)
 {

@@ -26,6 +26,7 @@
 #define WARNINGPROXYMODEL_H
 
 #include "warningmodel.h"
+#include "settings.h"
 
 #include <QSortFilterProxyModel>
 
@@ -33,7 +34,7 @@ class WarningProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 public:
-    explicit WarningProxyModel(WarningModel *model, QObject *parent = nullptr);
+    explicit WarningProxyModel(WarningModel *model, Settings *settings, QObject *parent = nullptr);
     void setAcceptedCategories(const QSet<QString> &categories);
     void setText(const QString &filter);
 
@@ -54,6 +55,7 @@ protected:
 private:
     bool isAcceptedCategory(const QString &category);
     void calculateAvailableCategories();
+    Settings *const m_settings;
     QSet<QString> m_acceptedCategories;
     QSet<QString> m_availableCategories;
     QString m_text;

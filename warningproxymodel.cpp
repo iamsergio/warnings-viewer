@@ -23,12 +23,15 @@
 */
 
 #include "warningproxymodel.h"
+#include "settings.h"
 
 #include <QRegularExpression>
 #include <QDebug>
 
-WarningProxyModel::WarningProxyModel(WarningModel *model, QObject *parent)
+WarningProxyModel::WarningProxyModel(WarningModel *model, Settings *settings, QObject *parent)
     : QSortFilterProxyModel(parent)
+    , m_settings(settings)
+    , m_availableCategoryFilterRegex(settings->categoryFilterRegexp())
 {
     connect(this, &WarningProxyModel::rowsInserted, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::rowsRemoved, this, &WarningProxyModel::countChanged);
