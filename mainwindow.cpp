@@ -112,15 +112,21 @@ void MainWindow::openLog(const QString &filename)
     if (!finfo.exists() || !finfo.isFile())
         return;
 
-    auto tab = new Tab(filename);
-    m_tabs.push_back(tab);
-    if (tab->model()->rowCount({}) > 0) {
-        connect(tab->proxyModel(), &WarningProxyModel::categoriesChanged, this, &MainWindow::updateCategoryView);
-        connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
-        ui->tabWidget->addTab(tab, finfo.fileName());
-    } else {
-        std::cout << "File does not contain any warnings (" << finfo.fileName().toStdString() << ")" << std::endl;
+    Tab *tab = tabForFilename(filename);
+    const bool alreadyExist = ui->tabWidget->indexOf(tab) != -1;
+    if (!alreadyExist) {
+        tab = new Tab(filename);
+        m_tabs.push_back(tab);
+        if (tab->model()->rowCount({}) > 0) {
+            connect(tab->proxyModel(), &WarningProxyModel::categoriesChanged, this, &MainWindow::updateCategoryView);
+            connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
+            ui->tabWidget->addTab(tab, finfo.fileName());
+        } else {
+            std::cout << "File does not contain any warnings (" << finfo.fileName().toStdString() << ")" << std::endl;
+        }
     }
+
+    ui->tabWidget->setCurrentWidget(tab);
 }
 
 void MainWindow::updateCategoryView()
@@ -286,4 +292,10 @@ void MainWindow::onCategoryFilterChanged(const QString &regex)
     WarningProxyModel *proxy = currentProxyModel();
     if (proxy)
         proxy->setAvailableCategoryFilterRegex(regex);
+}
+
+Tab *MainWindow::tabForFilename(const QString &filename) const
+{
+    auto it = std::find_if(m_tabs.cbegin(), m_tabs.cend(), [filename](Tab *tab) { return tab->filename() == filename; });
+    return it == m_tabs.cend() ? nullptr : *it;
 }

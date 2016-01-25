@@ -41,10 +41,12 @@ public:
     QTableView *tableView() const;
     WarningProxyModel* proxyModel() const;
     WarningModel* model() const;
+    QString filename() const;
 private:
     WarningModel *const m_model;
     WarningProxyModel *const m_proxyModel;
     QTableView *const m_tableView;
+    const QString m_filename;
 };
 
 #endif

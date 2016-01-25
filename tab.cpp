@@ -36,6 +36,7 @@ Tab::Tab(const QString &filename, QWidget *parent)
     , m_model(new WarningModel(this))
     , m_proxyModel(new WarningProxyModel(m_model, this))
     , m_tableView(new QTableView())
+    , m_filename(filename)
 {
     m_model->loadFile(filename);
 
@@ -61,4 +62,9 @@ WarningProxyModel* Tab::proxyModel() const
 WarningModel* Tab::model() const
 {
     return m_model;
+}
+
+QString Tab::filename() const
+{
+    return m_filename;
 }

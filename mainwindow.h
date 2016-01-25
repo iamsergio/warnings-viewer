@@ -66,6 +66,7 @@ private Q_SLOTS:
     void openSettings();
     void onCategoryFilterChanged(const QString &);
 private:
+    Tab *tabForFilename(const QString &filename) const;
     void selectFirstCategory();
     void resizeColumnsToContents();
     QTableView *currentTableView() const;
