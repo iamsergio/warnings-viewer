@@ -24,6 +24,9 @@
 
 #include "warningproxymodel.h"
 
+#include <QRegularExpression>
+#include <QDebug>
+
 WarningProxyModel::WarningProxyModel(WarningModel *model, QObject *parent)
     : QSortFilterProxyModel(parent)
 {
@@ -72,14 +75,37 @@ void WarningProxyModel::setText(const QString &filter)
 
 void WarningProxyModel::onSourceModelLoaded(bool success, const QString &)
 {
-    if (!success)
+    if (success)
+        calculateAvailableCategories();
+}
+
+bool WarningProxyModel::isAcceptedCategory(const QString &category)
+{
+    if (m_availableCategoryFilterRegex.isEmpty())
+        return true;
+
+    QRegularExpression re(QString(R"(%1)").arg(m_availableCategoryFilterRegex));
+    QRegularExpressionMatch match = re.match(category);
+    return match.hasMatch();
+}
+
+void WarningProxyModel::setSourceModel(QAbstractItemModel *model)
+{
+    QSortFilterProxyModel::setSourceModel(model);
+    calculateAvailableCategories();
+}
+
+void WarningProxyModel::calculateAvailableCategories()
+{
+    if (!sourceModel())
         return;
 
     m_availableCategories.clear();
-    const int count = rowCount();
+    const int count = sourceModel()->rowCount();
     for (int i = 0; i < count; ++i) {
-        QString category = index(i, 0).data(WarningModel::CategoryRole).toString();
-        m_availableCategories.insert(category);
+        QString category = sourceModel()->index(i, 0).data(WarningModel::CategoryRole).toString();
+        if (isAcceptedCategory(category))
+            m_availableCategories.insert(category);
     }
 
     emit categoriesChanged();
@@ -88,4 +114,12 @@ void WarningProxyModel::onSourceModelLoaded(bool success, const QString &)
 QSet<QString> WarningProxyModel::availableCategories() const
 {
     return m_availableCategories;
+}
+
+void WarningProxyModel::setAvailableCategoryFilterRegex(const QString &regex)
+{
+    if (regex != m_availableCategoryFilterRegex) {
+        m_availableCategoryFilterRegex = regex;
+        calculateAvailableCategories();
+    }
 }

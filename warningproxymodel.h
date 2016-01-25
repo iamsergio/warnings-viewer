@@ -38,6 +38,8 @@ public:
     void setText(const QString &filter);
 
     QSet<QString> availableCategories() const;
+    void setAvailableCategoryFilterRegex(const QString &regex);
+    void setSourceModel(QAbstractItemModel *model) override;
 
 signals:
     void countChanged();
@@ -50,9 +52,12 @@ protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
 private:
+    bool isAcceptedCategory(const QString &category);
+    void calculateAvailableCategories();
     QSet<QString> m_acceptedCategories;
     QSet<QString> m_availableCategories;
     QString m_text;
+    QString m_availableCategoryFilterRegex;
 };
 
 #endif

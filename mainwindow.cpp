@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::openSettings);
+    connect(&m_settings, &Settings::categoryFilterRegexpChanged, this, &MainWindow::onCategoryFilterChanged);
 
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -114,9 +115,9 @@ void MainWindow::openLog(const QString &filename)
 
     auto tab = new Tab(filename);
     if (tab->model()->rowCount({}) > 0) {
-        ui->tabWidget->addTab(tab, finfo.fileName());
         connect(tab->proxyModel(), &WarningProxyModel::categoriesChanged, this, &MainWindow::updateCategoryView);
         connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
+        ui->tabWidget->addTab(tab, finfo.fileName());
     } else {
         tab->deleteLater();
         std::cout << "File does not contain any warnings (" << finfo.fileName().toStdString() << ")" << std::endl;
@@ -247,6 +248,7 @@ WarningProxyModel *MainWindow::currentProxyModel() const
 
 void MainWindow::onTabChanged()
 {
+    onCategoryFilterChanged(m_settings.categoryFilterRegexp());
     filterByText();
     updateCategoryView();
     updateStatusBar();
@@ -274,4 +276,11 @@ void MainWindow::openSettings()
         m_settingsWindow = new SettingsWindow(&m_settings, this);
         m_settingsWindow->show();
     }
+}
+
+void MainWindow::onCategoryFilterChanged(const QString &regex)
+{
+    WarningProxyModel *proxy = currentProxyModel();
+    if (proxy)
+        proxy->setAvailableCategoryFilterRegex(regex);
 }

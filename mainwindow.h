@@ -64,7 +64,7 @@ private Q_SLOTS:
     void onTabChanged();
     void closeTab(int index);
     void openSettings();
-
+    void onCategoryFilterChanged(const QString &);
 private:
     void selectFirstCategory();
     void resizeColumnsToContents();
