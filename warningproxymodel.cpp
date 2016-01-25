@@ -38,6 +38,7 @@ WarningProxyModel::WarningProxyModel(WarningModel *model, Settings *settings, QO
     connect(this, &WarningProxyModel::modelReset, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::layoutChanged, this, &WarningProxyModel::countChanged);
     connect(model, &WarningModel::loadFinished, this, &WarningProxyModel::onSourceModelLoaded);
+    connect(m_settings, &Settings::categoryFilterRegexpChanged, this, &WarningProxyModel::setAvailableCategoryFilterRegex);
 }
 
 bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const

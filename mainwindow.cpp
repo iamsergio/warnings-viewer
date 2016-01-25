@@ -59,7 +59,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::openSettings);
-    connect(&m_settings, &Settings::categoryFilterRegexpChanged, this, &MainWindow::onCategoryFilterChanged);
 
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
@@ -253,7 +252,6 @@ WarningProxyModel *MainWindow::currentProxyModel() const
 
 void MainWindow::onTabChanged()
 {
-    onCategoryFilterChanged(m_settings.categoryFilterRegexp());
     filterByText();
     updateCategoryView();
     updateStatusBar();
@@ -285,13 +283,6 @@ void MainWindow::openSettings()
         m_settingsWindow = new SettingsWindow(&m_settings, this);
         m_settingsWindow->show();
     }
-}
-
-void MainWindow::onCategoryFilterChanged(const QString &regex)
-{
-    WarningProxyModel *proxy = currentProxyModel();
-    if (proxy)
-        proxy->setAvailableCategoryFilterRegex(regex);
 }
 
 Tab *MainWindow::tabForFilename(const QString &filename) const
