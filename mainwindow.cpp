@@ -25,7 +25,6 @@
 #include "mainwindow.h"
 #include "warningmodel.h"
 #include "warningproxymodel.h"
-#include "tab.h"
 #include "settingswindow.h"
 
 #include <QApplication>
@@ -114,12 +113,12 @@ void MainWindow::openLog(const QString &filename)
         return;
 
     auto tab = new Tab(filename);
+    m_tabs.push_back(tab);
     if (tab->model()->rowCount({}) > 0) {
         connect(tab->proxyModel(), &WarningProxyModel::categoriesChanged, this, &MainWindow::updateCategoryView);
         connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
         ui->tabWidget->addTab(tab, finfo.fileName());
     } else {
-        tab->deleteLater();
         std::cout << "File does not contain any warnings (" << finfo.fileName().toStdString() << ")" << std::endl;
     }
 }
@@ -264,7 +263,11 @@ void MainWindow::selectFirstCategory()
 
 void MainWindow::closeTab(int index)
 {
-    delete ui->tabWidget->widget(index);
+    auto tab = static_cast<Tab*>(ui->tabWidget->widget(index));
+    auto it = std::find(m_tabs.begin(), m_tabs.end(), tab);
+    Q_ASSERT(it != m_tabs.end());
+    delete *it;
+    m_tabs.erase(it);
 }
 
 void MainWindow::openSettings()

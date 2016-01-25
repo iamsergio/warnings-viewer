@@ -27,6 +27,7 @@
 
 #include "ui_mainwindow.h"
 #include "settings.h"
+#include "tab.h"
 
 #include <QMainWindow>
 #include <QPointer>
@@ -35,7 +36,6 @@ namespace Ui {
 class MainWindow;
 }
 
-class Tab;
 class WarningModel;
 class WarningProxyModel;
 class QTableView;
@@ -76,6 +76,7 @@ private:
     Ui::MainWindow *const ui;
     QPointer<SettingsWindow> m_settingsWindow;
     Settings m_settings;
+    Tab::List m_tabs; // Visible and invisible tabs
 };
 
 #endif
