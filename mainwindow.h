@@ -64,6 +64,7 @@ private Q_SLOTS:
     void onTabChanged();
     void closeTab(int index);
     void openSettings();
+    void reloadTabs();
 private:
     Tab *tabForFilename(const QString &filename) const;
     void selectFirstCategory();

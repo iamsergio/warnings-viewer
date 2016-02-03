@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::openSettings);
-
+    connect(&m_settings, &Settings::categoryFilterRegexpChanged, this, &MainWindow::reloadTabs);
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     setWindowTitle("warnings-viewer");
@@ -281,6 +281,15 @@ void MainWindow::openSettings()
     } else {
         m_settingsWindow = new SettingsWindow(&m_settings, this);
         m_settingsWindow->show();
+    }
+}
+
+void MainWindow::reloadTabs()
+{
+    ui->tabWidget->clear();
+    for (Tab *tab: m_tabs) {
+        Q_ASSERT(tab);
+        openLog(tab->filename());
     }
 }
 
