@@ -145,7 +145,7 @@ bool WarningModel::loadFile(const QString &filename)
 
     endResetModel();
 
-    qDebug() << "Loaded " << m_warnings.size() << "warnings";
+    qDebug() << "Loaded " << m_warnings.size() << " unfiltered warnings from" << filename;
     emit loadFinished(true, QString());
     return true;
 }
