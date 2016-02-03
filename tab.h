@@ -38,7 +38,7 @@ class Tab : public QWidget
 {
     Q_OBJECT
 public:
-    typedef QVector<QPointer<Tab>> List;
+    typedef QVector<Tab*> List;
     explicit Tab(const QString &filename,  Settings *settings, QWidget *parent = nullptr);
     QTableView *tableView() const;
     WarningProxyModel* proxyModel() const;

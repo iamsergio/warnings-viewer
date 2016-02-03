@@ -287,8 +287,8 @@ void MainWindow::openSettings()
 void MainWindow::reloadTabs()
 {
     ui->tabWidget->clear();
-    for (Tab *tab: m_tabs) {
-        Q_ASSERT(tab);
+    foreach (Tab *tab, m_tabs) { // use foreach since openLog() modifies container
+        //Q_ASSERT(tab);
         openLog(tab->filename());
     }
 }
