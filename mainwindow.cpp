@@ -120,12 +120,12 @@ void MainWindow::openLog(const QString &filename)
             connect(tab->proxyModel(), &WarningProxyModel::availableCategoriesChanged, this, &MainWindow::updateCategoryView);
             connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
             ui->tabWidget->addTab(tab, finfo.fileName());
+            ui->tabWidget->setCurrentWidget(tab);
         } else {
             std::cout << "File does not contain any warnings (" << finfo.fileName().toStdString() << ")" << std::endl;
         }
     }
 
-    ui->tabWidget->setCurrentWidget(tab);
 }
 
 void MainWindow::updateCategoryView()
