@@ -112,7 +112,7 @@ void WarningProxyModel::calculateAvailableCategories()
             m_availableCategories.insert(category);
     }
 
-    emit categoriesChanged();
+    emit availableCategoriesChanged(m_availableCategories.size());
 }
 
 QSet<QString> WarningProxyModel::availableCategories() const

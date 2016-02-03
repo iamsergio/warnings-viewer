@@ -44,7 +44,7 @@ public:
 
 signals:
     void countChanged();
-    void categoriesChanged();
+    void availableCategoriesChanged(int numAvailableCategories);
 
 private Q_SLOTS:
     void onSourceModelLoaded(bool success, const QString &errorMsg);

@@ -117,7 +117,7 @@ void MainWindow::openLog(const QString &filename)
         tab = new Tab(filename, &m_settings);
         m_tabs.push_back(tab);
         if (tab->model()->rowCount({}) > 0) {
-            connect(tab->proxyModel(), &WarningProxyModel::categoriesChanged, this, &MainWindow::updateCategoryView);
+            connect(tab->proxyModel(), &WarningProxyModel::availableCategoriesChanged, this, &MainWindow::updateCategoryView);
             connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
             ui->tabWidget->addTab(tab, finfo.fileName());
         } else {
