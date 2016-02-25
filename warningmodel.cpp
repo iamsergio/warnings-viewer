@@ -139,7 +139,7 @@ bool WarningModel::loadFile(const QString &filename)
 
     m_warnings.clear();
     m_warnings.reserve(uniqueWarningsHash.size());
-    for (const auto &warning : m_warnings)
+    for (const auto &warning : uniqueWarningsHash)
         m_warnings.push_back(warning);
 
     endResetModel();
