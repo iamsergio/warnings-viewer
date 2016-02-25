@@ -62,7 +62,7 @@ QVariant WarningModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::DisplayRole) {
         if (col == ShortFilenameColumn) {
-            return warning.shortFileName();
+            return warning.shortFileName() + QStringLiteral(":%1:%2").arg(warning.lineNumber()).arg(warning.columnNumber());
         } else if (col == TextColumn) {
             return warning.m_text;
         } else if (col == CategoryColumn) {
@@ -125,7 +125,22 @@ bool WarningModel::loadFile(const QString &filename)
         if (match.hasMatch()) {
             Warning warn;
             warn.m_completeText = match.captured(0);
-            warn.setFilename(match.captured(1).trimmed());
+            const QStringList filenameTokens = match.captured(1).trimmed().split(':');
+            warn.setFilename(filenameTokens.first());
+
+            // filenameTokens is for example { "file.cpp", 10, 1 }
+            if (filenameTokens.size() > 1) {
+                bool ok = false;
+                int line = filenameTokens[1].toInt(&ok);
+                if (ok) {
+                    warn.setLineNumber(line);
+                    if (filenameTokens.size() > 2) {
+                        int column = filenameTokens[2].toInt(&ok);
+                        if (ok)
+                            warn.setColumnNumber(column);
+                    }
+                }
+            }
 
             if (warn.filename().isEmpty())
                 continue;

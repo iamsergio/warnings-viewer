@@ -54,6 +54,10 @@ public:
         }
     }
     QString filename() const { return m_filename; }
+    int lineNumber() const { return m_lineNumber; }
+    void setLineNumber(int n) { m_lineNumber = n; }
+    int columnNumber() const { return m_columnNumber; }
+    void setColumnNumber(int n) { m_columnNumber = n; }
     QString shortFileName() const { return m_shortFilename; }
     bool pathIsAbsolute() const { return m_filename.startsWith("/"); }
 
@@ -65,6 +69,8 @@ public:
 private:
     QString m_filename;
     QString m_shortFilename;
+    int m_lineNumber = -1;
+    int m_columnNumber = -1;
 };
 
 Q_DECLARE_METATYPE(Warning)
