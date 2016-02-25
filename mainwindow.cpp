@@ -198,14 +198,18 @@ void MainWindow::openCellInEditor()
     if (!index.isValid())
         return;
 
-    const QString editor = m_settings.externalEditor();
+    QString editor = m_settings.externalEditor();
     if (editor.isEmpty()) {
         QMessageBox::warning(this, QString(), tr("Go to settings and set an editor"));
         return;
     }
-
     Warning warn = index.data(WarningModel::WarningRole).value<Warning>();
-    QProcess::startDetached(editor, { warn.filename() });
+
+    editor.replace("$filename", warn.filename());
+    editor.replace("$line", QString::number(warn.lineNumber()));
+    editor.replace("$column", QString::number(warn.columnNumber()));
+
+    QProcess::startDetached(editor);
 }
 
 QModelIndex MainWindow::selectedIndex() const

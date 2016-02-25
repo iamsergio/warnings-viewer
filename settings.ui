@@ -23,7 +23,7 @@
          <string>An executable or script that will open the file where a warning occurred.</string>
         </property>
         <property name="whatsThis">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Allows you to automatically invoke an editor when right clicking on a warning.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Your script or executable will receive, as first argument a string with the format:&lt;/p&gt;&lt;p&gt;&amp;lt;filename&amp;gt;:line:col&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;For example:&lt;/p&gt;&lt;p&gt;foo.cpp:50:2&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Allows you to automatically invoke an editor when right clicking on a warning, for example:&lt;/p&gt;&lt;p&gt;myEditor $filename $line $column&lt;/p&gt;&lt;p&gt;The tags $filename $line and $column will be replaced with the respective values.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
          <string>External editor</string>
