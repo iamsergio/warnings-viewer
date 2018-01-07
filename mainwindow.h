@@ -28,6 +28,7 @@
 #include "ui_mainwindow.h"
 #include "settings.h"
 #include "tab.h"
+#include "clazychecks.h"
 
 #include <QMainWindow>
 #include <QPointer>
@@ -78,6 +79,7 @@ private:
     QPointer<SettingsWindow> m_settingsWindow;
     Settings m_settings;
     Tab::List m_tabs; // Visible and invisible tabs
+    ClazyChecks m_clazyChecks;
 };
 
 #endif

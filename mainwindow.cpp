@@ -63,6 +63,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     setWindowTitle("warnings-viewer");
+
+    m_clazyChecks.readChecks();
 }
 
 MainWindow::~MainWindow()
