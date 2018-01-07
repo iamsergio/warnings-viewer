@@ -31,7 +31,6 @@
 
 ClazyChecks::ClazyChecks()
 {
-    readChecks();
 }
 
 bool ClazyChecks::readChecks()
