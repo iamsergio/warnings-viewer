@@ -56,9 +56,9 @@ protected:
 
 private Q_SLOTS:
     void askOpenLog();
-    void updateCategoryView();
-    void selectAllCategories();
-    void unselectAllCategories();
+    void updateWarningView();
+    void selectAllWarningTypes();
+    void unselectAllWarningTypes();
     void filterByWarningType();
     void filterByText();
     void updateStatusBar();
@@ -70,7 +70,7 @@ private Q_SLOTS:
     void reloadTabs();
 private:
     Tab *tabForFilename(const QString &filename) const;
-    void selectFirstCategory();
+    void selectFirstWarningType();
     void resizeColumnsToContents();
     QTableView *currentTableView() const;
     WarningModel *currentModel() const;

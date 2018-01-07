@@ -40,14 +40,14 @@ class WarningModel : public QAbstractTableModel
 public:
 
     enum Role {
-        CategoryRole = Qt::UserRole + 1,
+        WarningNameRole = Qt::UserRole + 1,
         WarningRole
     };
 
     enum Column {
         ShortFilenameColumn,
         TextColumn,
-        CategoryColumn,
+        WarningNameColumn,
         ColumnCount
     };
 

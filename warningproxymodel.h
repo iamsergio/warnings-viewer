@@ -35,16 +35,16 @@ class WarningProxyModel : public QSortFilterProxyModel
     Q_OBJECT
 public:
     explicit WarningProxyModel(WarningModel *model, Settings *settings, QObject *parent = nullptr);
-    void setAcceptedWarningTypes(const QSet<QString> &categories);
+    void setAcceptedWarningTypes(const QSet<QString> &warningTypes);
     void setText(const QString &filter);
 
-    QSet<QString> availableCategories() const;
-    void setAvailableCategoryFilterRegex(const QString &regex);
+    QSet<QString> availableWarnings() const;
+    void setAvailableWarningFilterRegex(const QString &regex);
     void setSourceModel(QAbstractItemModel *model) override;
 
 signals:
     void countChanged();
-    void availableCategoriesChanged(int numAvailableCategories);
+    void availableWarningsChanged(int numAvailableWarningTypes);
 
 private Q_SLOTS:
     void onSourceModelLoaded(bool success, const QString &errorMsg);
@@ -53,13 +53,13 @@ protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
 private:
-    bool isAcceptedCategory(const QString &category);
-    void calculateAvailableCategories();
+    bool isAcceptedWarning(const QString &warning);
+    void calculateAvailableWarnings();
     Settings *const m_settings;
-    QSet<QString> m_acceptedCategories;
-    QSet<QString> m_availableCategories;
+    QSet<QString> m_acceptedWarnings;
+    QSet<QString> m_availableWarnings;
     QString m_text;
-    QString m_availableCategoryFilterRegex;
+    QString m_availableWarningFilterRegex;
 };
 
 #endif

@@ -33,7 +33,7 @@ class Warning {
 public:
     typedef QVector<Warning> List;
     QString m_text;
-    QString m_category;
+    QString m_warningName;
     QString m_completeText;
 
     void setFilename(const QString &filename)
@@ -63,7 +63,7 @@ public:
 
     QString toString() const
     {
-        return m_shortFilename + ":" + m_text + ":" + m_category;
+        return m_shortFilename + ":" + m_text + ":" + m_warningName;
     }
 
 private:

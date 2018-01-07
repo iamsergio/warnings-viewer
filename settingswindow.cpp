@@ -46,13 +46,13 @@ SettingsWindow::~SettingsWindow()
 void SettingsWindow::fillForm()
 {
     ui->externalEditor->setText(m_settings->externalEditor());
-    ui->regexp->setText(m_settings->categoryFilterRegexp());
+    ui->regexp->setText(m_settings->warningFilterRegexp());
 }
 
 void SettingsWindow::saveForm()
 {
     m_settings->setExternalEditor(ui->externalEditor->text());
-    m_settings->setCategoryFilterRegexp(ui->regexp->text());
+    m_settings->setWarningFilterRegexp(ui->regexp->text());
     m_settings->save();
 }
 

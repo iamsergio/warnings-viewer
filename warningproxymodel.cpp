@@ -31,14 +31,14 @@
 WarningProxyModel::WarningProxyModel(WarningModel *model, Settings *settings, QObject *parent)
     : QSortFilterProxyModel(parent)
     , m_settings(settings)
-    , m_availableCategoryFilterRegex(settings->categoryFilterRegexp())
+    , m_availableWarningFilterRegex(settings->warningFilterRegexp())
 {
     connect(this, &WarningProxyModel::rowsInserted, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::rowsRemoved, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::modelReset, this, &WarningProxyModel::countChanged);
     connect(this, &WarningProxyModel::layoutChanged, this, &WarningProxyModel::countChanged);
     connect(model, &WarningModel::loadFinished, this, &WarningProxyModel::onSourceModelLoaded);
-    connect(m_settings, &Settings::categoryFilterRegexpChanged, this, &WarningProxyModel::setAvailableCategoryFilterRegex);
+    connect(m_settings, &Settings::warningFilterRegexpChanged, this, &WarningProxyModel::setAvailableWarningFilterRegex);
 }
 
 bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const
@@ -46,13 +46,13 @@ bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &sour
     if (source_parent.isValid())
         return false;
 
-    if (m_acceptedCategories.isEmpty())
+    if (m_acceptedWarnings.isEmpty())
         return false;
 
     const QModelIndex sourceIndex = sourceModel()->index(source_row, 0);
     const Warning warn = sourceIndex.data(WarningModel::WarningRole).value<Warning>();
-    const QString category = warn.m_category;
-    if (!m_acceptedCategories.isEmpty() && !m_acceptedCategories.contains(category))
+    const QString warningName = warn.m_warningName;
+    if (!m_acceptedWarnings.isEmpty() && !m_acceptedWarnings.contains(warningName))
         return false;
 
     if (!m_text.isEmpty() && !warn.m_completeText.toLower().contains(m_text.toLower()))
@@ -61,10 +61,10 @@ bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &sour
     return true;
 }
 
-void WarningProxyModel::setAcceptedWarningTypes(const QSet<QString> &categories)
+void WarningProxyModel::setAcceptedWarningTypes(const QSet<QString> &warnings)
 {
-    if (categories != m_acceptedCategories) {
-        m_acceptedCategories = categories;
+    if (warnings != m_acceptedWarnings) {
+        m_acceptedWarnings = warnings;
         invalidateFilter();
     }
 }
@@ -80,50 +80,50 @@ void WarningProxyModel::setText(const QString &filter)
 void WarningProxyModel::onSourceModelLoaded(bool success, const QString &)
 {
     if (success)
-        calculateAvailableCategories();
+        calculateAvailableWarnings();
 }
 
-bool WarningProxyModel::isAcceptedCategory(const QString &category)
+bool WarningProxyModel::isAcceptedWarning(const QString &warning)
 {
-    if (m_availableCategoryFilterRegex.isEmpty())
+    if (m_availableWarningFilterRegex.isEmpty())
         return true;
 
-    QRegularExpression re(QString(R"(%1)").arg(m_availableCategoryFilterRegex));
-    QRegularExpressionMatch match = re.match(category);
+    QRegularExpression re(QString(R"(%1)").arg(m_availableWarningFilterRegex));
+    QRegularExpressionMatch match = re.match(warning);
     return match.hasMatch();
 }
 
 void WarningProxyModel::setSourceModel(QAbstractItemModel *model)
 {
     QSortFilterProxyModel::setSourceModel(model);
-    calculateAvailableCategories();
+    calculateAvailableWarnings();
 }
 
-void WarningProxyModel::calculateAvailableCategories()
+void WarningProxyModel::calculateAvailableWarnings()
 {
     if (!sourceModel())
         return;
 
-    m_availableCategories.clear();
+    m_availableWarnings.clear();
     const int count = sourceModel()->rowCount();
     for (int i = 0; i < count; ++i) {
-        QString category = sourceModel()->index(i, 0).data(WarningModel::CategoryRole).toString();
-        if (isAcceptedCategory(category))
-            m_availableCategories.insert(category);
+        QString warningName = sourceModel()->index(i, 0).data(WarningModel::WarningNameRole).toString();
+        if (isAcceptedWarning(warningName))
+            m_availableWarnings.insert(warningName);
     }
 
-    emit availableCategoriesChanged(m_availableCategories.size());
+    emit availableWarningsChanged(m_availableWarnings.size());
 }
 
-QSet<QString> WarningProxyModel::availableCategories() const
+QSet<QString> WarningProxyModel::availableWarnings() const
 {
-    return m_availableCategories;
+    return m_availableWarnings;
 }
 
-void WarningProxyModel::setAvailableCategoryFilterRegex(const QString &regex)
+void WarningProxyModel::setAvailableWarningFilterRegex(const QString &regex)
 {
-    if (regex != m_availableCategoryFilterRegex) {
-        m_availableCategoryFilterRegex = regex;
-        calculateAvailableCategories();
+    if (regex != m_availableWarningFilterRegex) {
+        m_availableWarningFilterRegex = regex;
+        calculateAvailableWarnings();
     }
 }

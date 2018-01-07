@@ -65,13 +65,13 @@ QVariant WarningModel::data(const QModelIndex &index, int role) const
             return warning.shortFileName() + QStringLiteral(":%1:%2").arg(warning.lineNumber()).arg(warning.columnNumber());
         } else if (col == TextColumn) {
             return warning.m_text;
-        } else if (col == CategoryColumn) {
-            return warning.m_category;
+        } else if (col == WarningNameColumn) {
+            return warning.m_warningName;
         }
     } else if (role == Qt::ToolTipRole) {
         return warning.m_completeText;
-    } else if (role == CategoryRole) {
-        return warning.m_category;
+    } else if (role == WarningNameRole) {
+        return warning.m_warningName;
     } else if (role == WarningRole) {
         return QVariant::fromValue<Warning>(warning);
     }
@@ -90,8 +90,8 @@ QVariant WarningModel::headerData(int section, Qt::Orientation orientation, int 
             return tr("file name");
         case TextColumn:
             return "description";
-        case CategoryColumn:
-            return "category";
+        case WarningNameColumn:
+            return "warning";
         }
     }
 
@@ -146,8 +146,7 @@ bool WarningModel::loadFile(const QString &filename)
                 continue;
 
             warn.m_text = match.captured(2);
-            const QString category = match.captured(3);
-            warn.m_category = category;
+            warn.m_warningName = match.captured(3);
             uniqueWarningsHash.insert(warn.toString(), warn);
         }
     }

@@ -34,14 +34,14 @@ public:
     explicit Settings(QObject *parent = nullptr);
     void save();
 
-    void setCategoryFilterRegexp(const QString &);
-    QString categoryFilterRegexp() const;
+    void setWarningFilterRegexp(const QString &);
+    QString warningFilterRegexp() const;
 
     void setExternalEditor(const QString &);
     QString externalEditor() const;
 
 signals:
-    void categoryFilterRegexpChanged(const QString &);
+    void warningFilterRegexpChanged(const QString &);
 
 private:
     QSettings m_settings;

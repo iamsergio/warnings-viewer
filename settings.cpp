@@ -30,18 +30,18 @@ Settings::Settings(QObject *parent)
 
 }
 
-void Settings::setCategoryFilterRegexp(const QString &regex)
+void Settings::setWarningFilterRegexp(const QString &regex)
 {
-    bool valueChanged = categoryFilterRegexp() != regex;
+    bool valueChanged = warningFilterRegexp() != regex;
     if (valueChanged) {
-        m_settings.setValue("category_filter_regexp", regex);
-        emit categoryFilterRegexpChanged(regex);
+        m_settings.setValue("warning_filter_regexp", regex);
+        emit warningFilterRegexpChanged(regex);
     }
 }
 
-QString Settings::categoryFilterRegexp() const
+QString Settings::warningFilterRegexp() const
 {
-    return m_settings.value("category_filter_regexp").toString();
+    return m_settings.value("warning_filter_regexp").toString();
 }
 
 void Settings::setExternalEditor(const QString &executableName)

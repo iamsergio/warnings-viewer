@@ -61,14 +61,14 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->actionQuit, &QAction::triggered, qApp, &QApplication::quit);
     connect(ui->actionOpen_Log, &QAction::triggered, this, &MainWindow::askOpenLog);
-    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::selectAllCategories);
-    connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::unselectAllCategories);
+    connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::selectAllWarningTypes);
+    connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::unselectAllWarningTypes);
     connect(ui->filterListWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::filterByWarningType);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
     connect(ui->actionSettings, &QAction::triggered, this, &MainWindow::openSettings);
-    connect(&m_settings, &Settings::categoryFilterRegexpChanged, this, &MainWindow::reloadTabs);
+    connect(&m_settings, &Settings::warningFilterRegexpChanged, this, &MainWindow::reloadTabs);
     ui->filterListWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     setWindowTitle("warnings-viewer");
@@ -136,9 +136,9 @@ void MainWindow::openLog(const QString &filename)
         tab = new Tab(filename, &m_settings);
         m_tabs.push_back(tab);
         if (tab->model()->rowCount({}) > 0) {
-            connect(tab->proxyModel(), &WarningProxyModel::availableCategoriesChanged, this, &MainWindow::updateCategoryView);
+            connect(tab->proxyModel(), &WarningProxyModel::availableWarningsChanged, this, &MainWindow::updateWarningView);
             connect(tab->proxyModel(), &WarningProxyModel::countChanged, this, &MainWindow::updateStatusBar);
-            if (!tab->proxyModel()->availableCategories().isEmpty()) { // due to regexp category filter
+            if (!tab->proxyModel()->availableWarnings().isEmpty()) { // due to regexp warning filter
                 ui->tabWidget->addTab(tab, finfo.fileName());
                 ui->tabWidget->setCurrentWidget(tab);
             }
@@ -146,7 +146,7 @@ void MainWindow::openLog(const QString &filename)
     }
 }
 
-void MainWindow::updateCategoryView()
+void MainWindow::updateWarningView()
 {
     m_warningTypeModel.clear();
 
@@ -154,7 +154,7 @@ void MainWindow::updateCategoryView()
     if (!proxy)
         return;
 
-    foreach (const QString &warningType, proxy->availableCategories()) {
+    foreach (const QString &warningType, proxy->availableWarnings()) {
         auto item = new QStandardItem(warningType);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
         m_warningTypeModel.appendRow(item);
@@ -162,12 +162,12 @@ void MainWindow::updateCategoryView()
     resizeColumnsToContents();
 }
 
-void MainWindow::selectAllCategories()
+void MainWindow::selectAllWarningTypes()
 {
     ui->filterListWidget->selectAll();
 }
 
-void MainWindow::unselectAllCategories()
+void MainWindow::unselectAllWarningTypes()
 {
     ui->filterListWidget->clearSelection();
 }
@@ -276,12 +276,12 @@ WarningProxyModel *MainWindow::currentProxyModel() const
 void MainWindow::onTabChanged()
 {
     filterByText();
-    updateCategoryView();
+    updateWarningView();
     updateStatusBar();
-    selectFirstCategory();
+    selectFirstWarningType();
 }
 
-void MainWindow::selectFirstCategory()
+void MainWindow::selectFirstWarningType()
 {
     auto model = ui->filterListWidget->model();
     if (model->rowCount() > 0)
