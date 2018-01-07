@@ -1,7 +1,7 @@
 /*
    This file is part of warning-viewer.
 
-  Copyright (C) 2015 Sergio Martins <smartins@kde.org>
+  Copyright (C) 2018 Sergio Martins <smartins@kde.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -22,44 +22,24 @@
   without including the source code for Qt in the source distribution.
 */
 
-#ifndef WARNINGPROXYMODEL_H
-#define WARNINGPROXYMODEL_H
+#ifndef WARNINGTYPEFILTERPROXYMODEL_H
+#define WARNINGTYPEFILTERPROXYMODEL_H
 
-#include "warningmodel.h"
-#include "settings.h"
+#include "clazychecks.h"
 
 #include <QSortFilterProxyModel>
 
-class WarningProxyModel : public QSortFilterProxyModel
+class WarningTypeFilterProxyModel : public QSortFilterProxyModel
 {
-    Q_OBJECT
 public:
-    explicit WarningProxyModel(WarningModel *model, Settings *settings, QObject *parent = nullptr);
-    void setAcceptedWarningTypes(const QSet<QString> &categories);
-    void setText(const QString &filter);
-
-    QSet<QString> availableCategories() const;
-    void setAvailableCategoryFilterRegex(const QString &regex);
-    void setSourceModel(QAbstractItemModel *model) override;
-
-signals:
-    void countChanged();
-    void availableCategoriesChanged(int numAvailableCategories);
-
-private Q_SLOTS:
-    void onSourceModelLoaded(bool success, const QString &errorMsg);
-
-protected:
+    explicit WarningTypeFilterProxyModel(QObject *parent);
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
+    void setEnabledClazyCategories(const QStringList &categories);
+    void enableClazyCategory(const QString &category, bool enable);
 
 private:
-    bool isAcceptedCategory(const QString &category);
-    void calculateAvailableCategories();
-    Settings *const m_settings;
-    QSet<QString> m_acceptedCategories;
-    QSet<QString> m_availableCategories;
-    QString m_text;
-    QString m_availableCategoryFilterRegex;
+    QStringList m_enabledClazyCategories;
+    ClazyChecks m_clazyChecks;
 };
 
 #endif

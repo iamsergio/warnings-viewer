@@ -32,6 +32,7 @@
 
 #include <QMainWindow>
 #include <QPointer>
+#include <QStandardItemModel>
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +42,7 @@ class WarningModel;
 class WarningProxyModel;
 class QTableView;
 class SettingsWindow;
+class WarningTypeFilterProxyModel;
 
 class MainWindow : public QMainWindow
 {
@@ -57,7 +59,7 @@ private Q_SLOTS:
     void updateCategoryView();
     void selectAllCategories();
     void unselectAllCategories();
-    void filterByCategory();
+    void filterByWarningType();
     void filterByText();
     void updateStatusBar();
     void copyCell();
@@ -73,6 +75,8 @@ private:
     QTableView *currentTableView() const;
     WarningModel *currentModel() const;
     WarningProxyModel *currentProxyModel() const;
+    QStandardItemModel m_warningTypeModel;
+    WarningTypeFilterProxyModel *const m_warningTypeProxyModel;
     Tab* currentTab() const;
     QModelIndex selectedIndex() const;
     Ui::MainWindow *const ui;

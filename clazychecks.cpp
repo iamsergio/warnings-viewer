@@ -69,3 +69,16 @@ bool ClazyChecks::readChecks()
 
     return true;
 }
+
+ClazyCheck ClazyChecks::checkForName(const QString &name) const
+{
+    QString simpleName = name;
+    simpleName.replace("clazy-", "");
+
+    for (auto c : qAsConst(m_checks)) {
+        if (c.name == simpleName)
+            return c;
+    }
+
+    return ClazyCheck();
+}

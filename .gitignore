@@ -4,3 +4,8 @@ Makefile
 moc_*cpp
 ui_*.h
 *.pro.user
+moc_*h
+qrc_*h
+*.pro.user.*
+.qmake.stash
+qrc_*cpp

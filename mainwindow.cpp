@@ -26,6 +26,7 @@
 #include "warningmodel.h"
 #include "warningproxymodel.h"
 #include "settingswindow.h"
+#include "warningtypefilterproxymodel.h"
 
 #include <QApplication>
 #include <QFileDialog>
@@ -38,6 +39,7 @@
 #include <QProcess>
 #include <QTableView>
 #include <QFileInfo>
+#include <QCheckBox>
 #include <QDebug>
 #include <QContextMenuEvent>
 #include <QMessageBox>
@@ -46,15 +48,22 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , m_warningTypeProxyModel(new WarningTypeFilterProxyModel(this))
     , ui(new Ui::MainWindow())
     , m_settingsWindow(nullptr)
 {
+    m_clazyChecks.readChecks();
     ui->setupUi(this);
+    ui->filterListWidget->setModel(m_warningTypeProxyModel);
+    m_warningTypeProxyModel->setSourceModel(&m_warningTypeModel);
+    m_warningTypeModel.setObjectName("WarningType model");
+    m_warningTypeProxyModel->setObjectName("WarningType filter model");
+
     connect(ui->actionQuit, &QAction::triggered, qApp, &QApplication::quit);
     connect(ui->actionOpen_Log, &QAction::triggered, this, &MainWindow::askOpenLog);
     connect(ui->pushButton, &QPushButton::clicked, this, &MainWindow::selectAllCategories);
     connect(ui->pushButton_2, &QPushButton::clicked, this, &MainWindow::unselectAllCategories);
-    connect(ui->filterListWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::filterByCategory);
+    connect(ui->filterListWidget->selectionModel(), &QItemSelectionModel::selectionChanged, this, &MainWindow::filterByWarningType);
     connect(ui->tabWidget, &QTabWidget::currentChanged, this, &MainWindow::onTabChanged);
     connect(ui->tabWidget, &QTabWidget::tabCloseRequested, this, &MainWindow::closeTab);
     connect(ui->filterLineEdit, &QLineEdit::textChanged, this, &MainWindow::filterByText);
@@ -64,7 +73,15 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowTitle("warnings-viewer");
 
-    m_clazyChecks.readChecks();
+    auto filterLayout = new QHBoxLayout(ui->filters);
+    for (const QString &category : m_clazyChecks.categories()) {
+        auto checkbox = new QCheckBox(category);
+        checkbox->setChecked(true);
+        filterLayout->addWidget(checkbox);
+        connect(checkbox, &QCheckBox::toggled, [this, checkbox] (bool checked) {
+            m_warningTypeProxyModel->enableClazyCategory(checkbox->text(), checked);
+        });
+    }
 }
 
 MainWindow::~MainWindow()
@@ -131,15 +148,16 @@ void MainWindow::openLog(const QString &filename)
 
 void MainWindow::updateCategoryView()
 {
-    ui->filterListWidget->clear();
+    m_warningTypeModel.clear();
 
     WarningProxyModel *proxy = currentProxyModel();
     if (!proxy)
         return;
 
-    foreach (const QString &category, proxy->availableCategories()) {
-         auto item = new QListWidgetItem(category, ui->filterListWidget);
-         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+    foreach (const QString &warningType, proxy->availableCategories()) {
+        auto item = new QStandardItem(warningType);
+        item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
+        m_warningTypeModel.appendRow(item);
     }
     resizeColumnsToContents();
 }
@@ -154,19 +172,19 @@ void MainWindow::unselectAllCategories()
     ui->filterListWidget->clearSelection();
 }
 
-void MainWindow::filterByCategory()
+void MainWindow::filterByWarningType()
 {
     WarningProxyModel *proxy = currentProxyModel();
     if (!proxy)
         return;
 
-    QSet<QString> categories;
+    QSet<QString> warningTypes;
     const QModelIndexList indexes = ui->filterListWidget->selectionModel()->selectedIndexes();
     foreach (const auto &index, indexes) {
-        categories.insert(index.data(Qt::DisplayRole).toString());
+        warningTypes.insert(index.data(Qt::DisplayRole).toString());
     }
 
-    proxy->setAcceptedCategories(categories);
+    proxy->setAcceptedWarningTypes(warningTypes);
     resizeColumnsToContents();
 }
 

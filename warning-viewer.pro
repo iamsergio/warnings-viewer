@@ -10,12 +10,14 @@ INCLUDEPATH += .
 SOURCES += main.cpp mainwindow.cpp warningmodel.cpp warningproxymodel.cpp tab.cpp \
            settingswindow.cpp \
            settings.cpp \
-    clazychecks.cpp
+    clazychecks.cpp \
+    warningtypefilterproxymodel.cpp
 
 HEADERS += mainwindow.h warningmodel.h warningproxymodel.h tab.h \
            settingswindow.h \
            settings.h \
-    clazychecks.h
+    clazychecks.h \
+    warningtypefilterproxymodel.h
 
 FORMS += mainwindow.ui \
          settings.ui

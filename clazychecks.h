@@ -28,11 +28,13 @@
 #include <QStringList>
 #include <QVector>
 
-struct Check {
-    typedef QVector<Check> List;
+struct ClazyCheck {
+    typedef QVector<ClazyCheck> List;
     int level;
     const QString name;
     const QStringList categories;
+
+    bool isValid() const { return !name.isEmpty(); }
 };
 
 class ClazyChecks
@@ -41,11 +43,12 @@ public:
     ClazyChecks();
     bool readChecks();
 
-    Check::List checks() const { return m_checks; }
+    ClazyCheck::List checks() const { return m_checks; }
     QStringList categories() const { return m_availableCategories; }
+    ClazyCheck checkForName(const QString &name) const;
 
 private:
-    Check::List m_checks;
+    ClazyCheck::List m_checks;
     QStringList m_availableCategories;
 };
 

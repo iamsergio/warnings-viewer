@@ -61,7 +61,7 @@ bool WarningProxyModel::filterAcceptsRow(int source_row, const QModelIndex &sour
     return true;
 }
 
-void WarningProxyModel::setAcceptedCategories(const QSet<QString> &categories)
+void WarningProxyModel::setAcceptedWarningTypes(const QSet<QString> &categories)
 {
     if (categories != m_acceptedCategories) {
         m_acceptedCategories = categories;
