@@ -27,6 +27,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QStringList>
 #include <QMetaType>
 
 class Warning {
