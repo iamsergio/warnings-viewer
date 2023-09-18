@@ -9,3 +9,4 @@ qrc_*h
 *.pro.user.*
 .qmake.stash
 qrc_*cpp
+build-dev
