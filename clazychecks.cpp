@@ -63,7 +63,7 @@ bool ClazyChecks::readChecks()
         for (const QVariant &category : c.toMap().value("categories").toList())
             categories.append(category.toString());
 
-        m_checks.append({level, name, categories});
+        m_checks.append({ level, name, categories });
     }
 
     return true;

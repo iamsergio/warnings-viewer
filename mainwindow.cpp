@@ -78,7 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
         auto checkbox = new QCheckBox(category);
         checkbox->setChecked(true);
         filterLayout->addWidget(checkbox);
-        connect(checkbox, &QCheckBox::toggled, [this, checkbox] (bool checked) {
+        connect(checkbox, &QCheckBox::toggled, [this, checkbox](bool checked) {
             m_warningTypeProxyModel->enableClazyCategory(checkbox->text(), checked);
         });
     }
@@ -250,15 +250,15 @@ void MainWindow::resizeColumnsToContents()
         table->resizeColumnsToContents();
 }
 
-QTableView * MainWindow::currentTableView() const
+QTableView *MainWindow::currentTableView() const
 {
     Tab *tab = currentTab();
     return tab ? tab->tableView() : nullptr;
 }
 
-Tab* MainWindow::currentTab() const
+Tab *MainWindow::currentTab() const
 {
-    return qobject_cast<Tab*>(ui->tabWidget->currentWidget());
+    return qobject_cast<Tab *>(ui->tabWidget->currentWidget());
 }
 
 WarningModel *MainWindow::currentModel() const
@@ -290,7 +290,7 @@ void MainWindow::selectFirstWarningType()
 
 void MainWindow::closeTab(int index)
 {
-    auto tab = static_cast<Tab*>(ui->tabWidget->widget(index));
+    auto tab = static_cast<Tab *>(ui->tabWidget->widget(index));
     auto it = std::find(m_tabs.begin(), m_tabs.end(), tab);
     Q_ASSERT(it != m_tabs.end());
     delete *it;
@@ -312,7 +312,7 @@ void MainWindow::reloadTabs()
 {
     ui->tabWidget->clear();
     foreach (Tab *tab, m_tabs) { // use foreach since openLog() modifies container
-        //Q_ASSERT(tab);
+        // Q_ASSERT(tab);
         openLog(tab->filename());
     }
 }

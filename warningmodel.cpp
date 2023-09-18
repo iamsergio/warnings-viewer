@@ -47,7 +47,7 @@ int WarningModel::columnCount(const QModelIndex &) const
     return ColumnCount;
 }
 
-int WarningModel::rowCount(const QModelIndex &/*parent*/) const
+int WarningModel::rowCount(const QModelIndex & /*parent*/) const
 {
     return m_warnings.count();
 }

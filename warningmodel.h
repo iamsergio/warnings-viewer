@@ -38,7 +38,6 @@ class WarningModel : public QAbstractTableModel
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
-
     enum Role {
         WarningNameRole = Qt::UserRole + 1,
         WarningRole

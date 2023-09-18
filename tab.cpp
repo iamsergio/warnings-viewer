@@ -54,12 +54,12 @@ QTableView *Tab::tableView() const
     return m_tableView;
 }
 
-WarningProxyModel* Tab::proxyModel() const
+WarningProxyModel *Tab::proxyModel() const
 {
     return m_proxyModel;
 }
 
-WarningModel* Tab::model() const
+WarningModel *Tab::model() const
 {
     return m_model;
 }

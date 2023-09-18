@@ -27,7 +27,6 @@
 Settings::Settings(QObject *parent)
     : QObject(parent)
 {
-
 }
 
 void Settings::setWarningFilterRegexp(const QString &regex)

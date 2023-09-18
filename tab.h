@@ -38,12 +38,13 @@ class Tab : public QWidget
 {
     Q_OBJECT
 public:
-    typedef QVector<Tab*> List;
-    explicit Tab(const QString &filename,  Settings *settings, QWidget *parent = nullptr);
+    typedef QVector<Tab *> List;
+    explicit Tab(const QString &filename, Settings *settings, QWidget *parent = nullptr);
     QTableView *tableView() const;
-    WarningProxyModel* proxyModel() const;
-    WarningModel* model() const;
+    WarningProxyModel *proxyModel() const;
+    WarningModel *model() const;
     QString filename() const;
+
 private:
     WarningModel *const m_model;
     WarningProxyModel *const m_proxyModel;

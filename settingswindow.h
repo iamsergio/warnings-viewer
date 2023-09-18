@@ -29,7 +29,7 @@
 
 class Settings;
 namespace Ui {
-    class SettingsDialog;
+class SettingsDialog;
 }
 
 class SettingsWindow : public QDialog
@@ -38,8 +38,10 @@ class SettingsWindow : public QDialog
 public:
     explicit SettingsWindow(Settings *settings, QWidget *parent = nullptr);
     ~SettingsWindow();
+
 protected:
     void accept() override;
+
 private:
     void fillForm();
     void saveForm();

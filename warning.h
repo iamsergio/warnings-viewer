@@ -30,7 +30,8 @@
 #include <QStringList>
 #include <QMetaType>
 
-class Warning {
+class Warning
+{
 public:
     typedef QVector<Warning> List;
     QString m_text;
@@ -54,13 +55,34 @@ public:
             m_shortFilename = newList.join("/");
         }
     }
-    QString filename() const { return m_filename; }
-    int lineNumber() const { return m_lineNumber; }
-    void setLineNumber(int n) { m_lineNumber = n; }
-    int columnNumber() const { return m_columnNumber; }
-    void setColumnNumber(int n) { m_columnNumber = n; }
-    QString shortFileName() const { return m_shortFilename; }
-    bool pathIsAbsolute() const { return m_filename.startsWith("/"); }
+    QString filename() const
+    {
+        return m_filename;
+    }
+    int lineNumber() const
+    {
+        return m_lineNumber;
+    }
+    void setLineNumber(int n)
+    {
+        m_lineNumber = n;
+    }
+    int columnNumber() const
+    {
+        return m_columnNumber;
+    }
+    void setColumnNumber(int n)
+    {
+        m_columnNumber = n;
+    }
+    QString shortFileName() const
+    {
+        return m_shortFilename;
+    }
+    bool pathIsAbsolute() const
+    {
+        return m_filename.startsWith("/");
+    }
 
     QString toString() const
     {
