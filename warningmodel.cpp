@@ -112,7 +112,7 @@ bool WarningModel::loadFile(const QString &filename)
     }
 
     beginResetModel();
-    QRegularExpression re("(.*)warning:(.*)\\[-W(.*)\\].*");
+    QRegularExpression re("(.*)warning:(.*)\\[(.*)\\].*");
     QSet<QByteArray> uniqueWarnings;
     QHash<QString, Warning> uniqueWarningsHash;
     while (!file.atEnd()) {
@@ -146,7 +146,7 @@ bool WarningModel::loadFile(const QString &filename)
                 continue;
 
             warn.m_text = match.captured(2);
-            warn.m_warningName = match.captured(3);
+            warn.m_warningName = match.captured(3).replace("-W", "");
             uniqueWarningsHash.insert(warn.toString(), warn);
         }
     }
