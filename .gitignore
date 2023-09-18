@@ -10,3 +10,4 @@ qrc_*h
 .qmake.stash
 qrc_*cpp
 build-dev
+compile_commands.json
