@@ -19,6 +19,7 @@ add_executable(
     warningmodel.cpp
     warningproxymodel.cpp
     warningtypefilterproxymodel.cpp
+    resources.qrc
 )
 
 target_link_libraries(
