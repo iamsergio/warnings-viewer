@@ -6,7 +6,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIRS ON)
 
-find_package(Qt5 5.15 NO_MODULE REQUIRED COMPONENTS Widgets)
+find_package(Qt6 6.5 NO_MODULE REQUIRED COMPONENTS Widgets)
 
 add_executable(
     warnings-viewer
@@ -23,5 +23,5 @@ add_executable(
 )
 
 target_link_libraries(
-    warnings-viewer Qt5::Widgets
+    warnings-viewer Qt6::Widgets
 )

@@ -32,8 +32,8 @@ struct ClazyCheck
 {
     typedef QVector<ClazyCheck> List;
     int level;
-    const QString name;
-    const QStringList categories;
+    QString name;
+    QStringList categories;
 
     bool isValid() const
     {

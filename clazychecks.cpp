@@ -74,7 +74,7 @@ ClazyCheck ClazyChecks::checkForName(const QString &name) const
     QString simpleName = name;
     simpleName.replace("clazy-", "");
 
-    for (auto c : qAsConst(m_checks)) {
+    for (auto c : std::as_const(m_checks)) {
         if (c.name == simpleName)
             return c;
     }
